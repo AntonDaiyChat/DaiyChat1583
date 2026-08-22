@@ -6,7 +6,7 @@ import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Sparkles, Mail, Lock, User, Loader as Loader2, ArrowRight } from 'lucide-react';
+import { Sparkles, Mail, Lock, User, Loader as Loader2, ArrowRight, Check, CircleAlert } from 'lucide-react';
 import { toast } from 'sonner';
 
 export default function SignupPage() {
@@ -64,14 +64,6 @@ export default function SignupPage() {
       return;
     }
     if (data.user) {
-      const { error: profileError } = await supabase.from('profiles').insert({
-        id: data.user.id,
-        display_name: name,
-        onboarding_completed: false,
-      });
-      if (profileError) {
-        console.error('Profile creation failed', profileError);
-      }
       toast.success('Konto erstellt! Willkommen bei Daiy Chat.');
       router.push('/onboarding');
     }
@@ -109,17 +101,23 @@ export default function SignupPage() {
                   placeholder="6–15 Zeichen"
                   value={name}
                   onChange={(e) => setName(e.target.value)}
-                  className={`h-12 rounded-xl pl-10 ${name && nameError ? 'border-destructive' : ''}`}
+                  className={`h-12 rounded-xl pl-10 pr-10 ${name && nameError ? 'border-destructive' : name && !nameError ? 'border-success' : ''}`}
                   minLength={6}
                   maxLength={15}
                   required
                 />
+                {name && !nameError && (
+                  <Check className="absolute right-3 top-1/2 h-4 w-4 -translate-y-1/2 text-success" />
+                )}
+                {name && nameError && (
+                  <CircleAlert className="absolute right-3 top-1/2 h-4 w-4 -translate-y-1/2 text-destructive" />
+                )}
               </div>
               {name && nameError && (
                 <p className="text-xs text-destructive">{nameError}</p>
               )}
               {name && !nameError && (
-                <p className="text-xs text-muted-foreground">{name.length}/15 Zeichen</p>
+                <p className="text-xs text-success">Name gültig ({name.length}/15 Zeichen)</p>
               )}
             </div>
 
@@ -135,12 +133,21 @@ export default function SignupPage() {
                   placeholder="beispiel@gmail.com"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  className={`h-12 rounded-xl pl-10 ${email && emailError ? 'border-destructive' : ''}`}
+                  className={`h-12 rounded-xl pl-10 pr-10 ${email && emailError ? 'border-destructive' : email && !emailError ? 'border-success' : ''}`}
                   required
                 />
+                {email && !emailError && (
+                  <Check className="absolute right-3 top-1/2 h-4 w-4 -translate-y-1/2 text-success" />
+                )}
+                {email && emailError && (
+                  <CircleAlert className="absolute right-3 top-1/2 h-4 w-4 -translate-y-1/2 text-destructive" />
+                )}
               </div>
               {email && emailError && (
                 <p className="text-xs text-destructive">{emailError}</p>
+              )}
+              {email && !emailError && (
+                <p className="text-xs text-success">E-Mail gültig</p>
               )}
             </div>
 
@@ -156,12 +163,21 @@ export default function SignupPage() {
                   placeholder="Mindestens 6 Zeichen + 1 Zahl"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  className={`h-12 rounded-xl pl-10 ${password && passwordError ? 'border-destructive' : ''}`}
+                  className={`h-12 rounded-xl pl-10 pr-10 ${password && passwordError ? 'border-destructive' : password && !passwordError ? 'border-success' : ''}`}
                   required
                 />
+                {password && !passwordError && (
+                  <Check className="absolute right-3 top-1/2 h-4 w-4 -translate-y-1/2 text-success" />
+                )}
+                {password && passwordError && (
+                  <CircleAlert className="absolute right-3 top-1/2 h-4 w-4 -translate-y-1/2 text-destructive" />
+                )}
               </div>
               {password && passwordError && (
                 <p className="text-xs text-destructive">{passwordError}</p>
+              )}
+              {password && !passwordError && (
+                <p className="text-xs text-success">Passwort gültig</p>
               )}
             </div>
 
