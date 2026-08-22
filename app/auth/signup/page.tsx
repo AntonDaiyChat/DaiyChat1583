@@ -6,7 +6,7 @@ import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Sparkles, Mail, Lock, User, Loader2, ArrowRight } from 'lucide-react';
+import { Sparkles, Mail, Lock, User, Loader as Loader2, ArrowRight } from 'lucide-react';
 import { toast } from 'sonner';
 
 export default function SignupPage() {
@@ -16,10 +16,40 @@ export default function SignupPage() {
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
 
+  const validateName = (value: string): string | null => {
+    if (value.length < 6) return 'Name muss mindestens 6 Zeichen lang sein';
+    if (value.length > 15) return 'Name darf maximal 15 Zeichen lang sein';
+    return null;
+  };
+
+  const validateEmail = (value: string): string | null => {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(value)) return 'Bitte gib eine gültige E-Mail-Adresse ein';
+    return null;
+  };
+
+  const validatePassword = (value: string): string | null => {
+    if (value.length < 6) return 'Passwort muss mindestens 6 Zeichen lang sein';
+    if (!/\d/.test(value)) return 'Passwort muss mindestens 1 Zahl enthalten';
+    return null;
+  };
+
+  const nameError = validateName(name);
+  const emailError = validateEmail(email);
+  const passwordError = validatePassword(password);
+
   const handleSignup = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (password.length < 6) {
-      toast.error('Passwort muss mindestens 6 Zeichen lang sein');
+    if (nameError) {
+      toast.error(nameError);
+      return;
+    }
+    if (emailError) {
+      toast.error(emailError);
+      return;
+    }
+    if (passwordError) {
+      toast.error(passwordError);
       return;
     }
     setLoading(true);
@@ -76,13 +106,21 @@ export default function SignupPage() {
                 <Input
                   id="name"
                   type="text"
-                  placeholder="Dein Name"
+                  placeholder="6–15 Zeichen"
                   value={name}
                   onChange={(e) => setName(e.target.value)}
-                  className="h-12 rounded-xl pl-10"
+                  className={`h-12 rounded-xl pl-10 ${name && nameError ? 'border-destructive' : ''}`}
+                  minLength={6}
+                  maxLength={15}
                   required
                 />
               </div>
+              {name && nameError && (
+                <p className="text-xs text-destructive">{nameError}</p>
+              )}
+              {name && !nameError && (
+                <p className="text-xs text-muted-foreground">{name.length}/15 Zeichen</p>
+              )}
             </div>
 
             <div className="space-y-2">
@@ -94,13 +132,16 @@ export default function SignupPage() {
                 <Input
                   id="email"
                   type="email"
-                  placeholder="deine@email.de"
+                  placeholder="beispiel@gmail.com"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  className="h-12 rounded-xl pl-10"
+                  className={`h-12 rounded-xl pl-10 ${email && emailError ? 'border-destructive' : ''}`}
                   required
                 />
               </div>
+              {email && emailError && (
+                <p className="text-xs text-destructive">{emailError}</p>
+              )}
             </div>
 
             <div className="space-y-2">
@@ -112,18 +153,21 @@ export default function SignupPage() {
                 <Input
                   id="password"
                   type="password"
-                  placeholder="Mindestens 6 Zeichen"
+                  placeholder="Mindestens 6 Zeichen + 1 Zahl"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  className="h-12 rounded-xl pl-10"
+                  className={`h-12 rounded-xl pl-10 ${password && passwordError ? 'border-destructive' : ''}`}
                   required
                 />
               </div>
+              {password && passwordError && (
+                <p className="text-xs text-destructive">{passwordError}</p>
+              )}
             </div>
 
             <Button
               type="submit"
-              disabled={loading}
+              disabled={loading || !!nameError || !!emailError || !!passwordError}
               className="h-12 w-full rounded-xl bg-gradient-primary text-base font-semibold shadow-md transition-all hover:shadow-glow-primary"
             >
               {loading ? (
