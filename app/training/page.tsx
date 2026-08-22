@@ -142,12 +142,11 @@ function TrainingContent() {
       </div>
 
       <Tabs defaultValue="myworkout" className="w-full">
-        <TabsList className="grid w-full grid-cols-5 rounded-xl">
+        <TabsList className="grid w-full grid-cols-4 rounded-xl">
           <TabsTrigger value="myworkout" className="text-[10px] px-1">Mein Training</TabsTrigger>
           <TabsTrigger value="create" className="text-[10px] px-1">KI erstellen</TabsTrigger>
           <TabsTrigger value="standard" className="text-[10px] px-1">Standard</TabsTrigger>
           <TabsTrigger value="calculator" className="text-[10px] px-1">Kalorien</TabsTrigger>
-          <TabsTrigger value="ai" className="text-[10px] px-1">KI-Chat</TabsTrigger>
         </TabsList>
 
         {/* Mein Training Tab */}
@@ -238,11 +237,10 @@ function TrainingContent() {
           <CalorieCalculator />
         </TabsContent>
 
-        {/* KI-Chat Tab */}
-        <TabsContent value="ai" className="mt-4">
-          <AIChat persona="training" />
-        </TabsContent>
       </Tabs>
+
+      {/* KI-Chat — immer sichtbar unter den Tabs */}
+      <AIChat persona="training" />
     </div>
   );
 }
